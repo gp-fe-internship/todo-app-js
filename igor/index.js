@@ -3,10 +3,11 @@ const todoInputElement = document.querySelector('#todo-input');
 const todoListElement = document.querySelector('#todolist');
 const todoInputCountPlaceholder = document.querySelector('#input-count');
 const todoListTotalCount = document.querySelector('#total')
+const todoListTotalDoneCount = document.querySelector('#total-done');
 
 todoInputElement.addEventListener('keyup', handleInputChange);
 addButton.addEventListener('click', handleAddButtonClick);
-
+todoListElement.addEventListener('click', handleListItemClick)
 
 function handleInputChange(event) {
     handleInputCountUpdate(handleInputCount(event.target.value))
@@ -49,9 +50,11 @@ function createListItem(value) {
 
     const checkBoxElement = document.createElement('input');
     checkBoxElement.type = 'checkbox';
+    checkBoxElement.setAttribute('data-action', 'complete')
 
     const removeItemButton = document.createElement('button');
     removeItemButton.innerText = 'X';
+    removeItemButton.setAttribute('data-action', 'remove');
 
     const spanElement = document.createElement('span');
     spanElement.innerText = value;
@@ -72,4 +75,31 @@ function clearInput() {
 
 function countTotalTasks() {
     todoListTotalCount.innerText = `Total tasks: ${todoListElement.childElementCount}`
+}
+// maybe there should be one function for counting everything and one for showing?
+function countCompletedTasks() {
+
+    let i = 0;
+
+    const tasks = todoListElement.getElementsByTagName('li');
+    //maybe there's a better way than iterating the entire list every time...
+    for (const task of tasks) {
+        console.log(`task is ${task}`)
+        if (task.className === 'todolist__item complete') {
+
+            i++;
+        }
+    }
+
+    todoListTotalDoneCount.innerText = `Total done: ${i} ${i > 1 ? 'tasks' : 'task'}`
+}
+
+function handleListItemClick(event) {
+    if (event.target.dataset.action === 'remove') {
+        event.target.closest('li').remove();
+    }
+    if (event.target.dataset.action === 'complete') {
+        event.target.closest('li').classList.toggle('complete');
+        countCompletedTasks()
+    }
 }
