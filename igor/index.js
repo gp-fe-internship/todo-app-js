@@ -41,7 +41,6 @@ function handleAddButtonClick() {
     todos = getTodosFromLocalStorage()
     clearInput();
     countTotalTasks();
-
 }
 
 
@@ -123,7 +122,12 @@ function clearInput() {
 }
 
 function countTotalTasks() {
-    todoListTotalCount.innerText = `Total tasks: ${todos.length}`
+    todos = getTodosFromLocalStorage();
+    if (todos.length) {
+        todoListTotalCount.innerText = `Total tasks: ${todos.length}`
+    } else {
+        todoListTotalCount.innerText = '';
+    }
 }
 // maybe there should be one function for counting everything and one for showing?
 function countCompletedTasks() {
@@ -178,10 +182,6 @@ function updateLocalStorageOnComplete(event) {
     const taskId = todos.find(({ id }) => id === event.target.closest('li').dataset.todoId);
     taskId.complete = !taskId.complete;
     setTodosToLocalStorage(todos)
-}
-
-function updateLocalStorageOnDelete(event) {
-
 }
 
 let todos = getTodosFromLocalStorage() || [];
