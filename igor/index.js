@@ -25,7 +25,6 @@ function handleInputCountUpdate(value) {
         todoInputCountPlaceholder.innerText = '';
         return;
     }
-
     todoInputCountPlaceholder.innerText = `Characters count: ${value}`;
 }
 
@@ -42,7 +41,6 @@ function handleAddButtonClick() {
     clearInput();
     countTotalTasks();
 }
-
 
 function createListItem(value) {
 
@@ -169,7 +167,7 @@ function setTodosToLocalStorage(todos = []) {
 }
 
 function getTodosFromLocalStorage() {
-    return JSON.parse(localStorage.getItem(TODO_LOCALSTORAGE_KEY));
+    return JSON.parse(localStorage.getItem(TODO_LOCALSTORAGE_KEY)) || [];
 }
 
 function removeTodoFromLocalStorage(event) {
@@ -178,13 +176,17 @@ function removeTodoFromLocalStorage(event) {
 }
 
 function updateLocalStorageOnComplete(event) {
-    todos = getTodosFromLocalStorage();
-    const taskId = todos.find(({ id }) => id === event.target.closest('li').dataset.todoId);
-    taskId.complete = !taskId.complete;
-    setTodosToLocalStorage(todos)
+    let todoItems = getTodosFromLocalStorage() || [];
+    todoItems = todoItems.map(todo => {
+        if (todo.id === event.target.closest('li').dataset.todoId) {
+            todo.complete = !todo.complete;
+        }
+        return todo;
+    })
+    setTodosToLocalStorage(todoItems)
 }
 
-let todos = getTodosFromLocalStorage() || [];
+let todos = getTodosFromLocalStorage();
 if (!todos || !todos.length) {
     console.log('empty storage')
     setTodosToLocalStorage();
